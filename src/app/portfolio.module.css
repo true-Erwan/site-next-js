@@ -1,0 +1,145 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 8px 8px 0 0;
+  z-index: 10;
+}
+
+.titleWrapper h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(90deg, #fff, var(--text-dim));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+  font-size: 0.875rem;
+  color: var(--neon-green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.dashboardLayout {
+  display: flex;
+  flex: 1;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chartContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.svgContext {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.infoOverlay {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.priceLabel {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--neon-green);
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.875rem;
+  z-index: 10;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+}
+
+.volumeContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.nodeCard {
+  position: absolute;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  z-index: 30;
+  pointer-events: none;
+  transform: translate(-50%, -120%);
+  transition: opacity 0.2s ease;
+}
+
+.nodeCard.active {
+  opacity: 1;
+}
+
+.nodeCard.hidden {
+  opacity: 0;
+}
+
+.nodeYear {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--neon-green);
+}
+
+.nodeLabel {
+  font-weight: 600;
+  margin: 8px 0 4px;
+  font-size: 1rem;
+}
+
+.nodeDesc {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
