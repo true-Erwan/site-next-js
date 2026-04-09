@@ -9,6 +9,62 @@ export default function TradingChart() {
   const [hoveredNode, setHoveredNode] = useState<Milestone | null>(null);
   const [mousePos, setMousePos] = useState<{ x: number, y: number } | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [candles, setCandles] = useState<any[]>([]);
+
+  useEffect(() => {
+    const numCandles = 80;
+    const newCandles = [];
+    
+    // Base anchors
+    const anchors = [
+       { x: 0, y: 15 },
+       ...chartData.map(c => ({x: c.xPosition, y: c.yPosition}))
+    ];
+    
+    const getBaseY = (xPos: number) => {
+       for (let i = 0; i < anchors.length - 1; i++) {
+          if (xPos >= anchors[i].x && xPos <= anchors[i+1].x) {
+             const dx = anchors[i+1].x - anchors[i].x;
+             const dy = anchors[i+1].y - anchors[i].y;
+             if (dx === 0) return anchors[i].y;
+             const progress = (xPos - anchors[i].x) / dx;
+             return anchors[i].y + dy * progress;
+          }
+       }
+       return anchors[anchors.length - 1].y;
+    };
+
+    let prevClose = getBaseY(0);
+
+    for (let i = 0; i < numCandles; i++) {
+        const xPos = (i / (numCandles - 1)) * 100;
+        const targetY = getBaseY(xPos);
+        
+        let open = prevClose;
+        if (Math.random() > 0.8) {
+           open += (Math.random() - 0.5) * 8; 
+        }
+
+        const close = targetY + (Math.random() - 0.5) * 16;
+        const top = Math.max(open, close);
+        const bottom = Math.min(open, close);
+        const high = top + Math.random() * 12;
+        const low = bottom - Math.random() * 12;
+        
+        newCandles.push({
+           id: i,
+           xPos, 
+           open, 
+           close, 
+           high, 
+           low,
+           isGreen: close >= open
+        });
+        
+        prevClose = close;
+    }
+    setCandles(newCandles);
+  }, []);
   
   useEffect(() => {
     const updateDimensions = () => {
@@ -55,27 +111,6 @@ export default function TradingChart() {
     return { x, y };
   };
 
-  // Generate path string for the glowing curve
-  const generateChartPath = () => {
-    if (dimensions.width === 0) return '';
-    let path = '';
-    
-    chartData.forEach((point, index) => {
-      const { x, y } = getPixelCoords(point.xPosition, point.yPosition);
-      if (index === 0) {
-        path += `M ${x} ${y} `;
-      } else {
-        const prev = getPixelCoords(chartData[index - 1].xPosition, chartData[index - 1].yPosition);
-        // Simple bezier curve for smooth segments
-        const cx1 = prev.x + (x - prev.x) / 2;
-        const cy1 = prev.y;
-        const cx2 = prev.x + (x - prev.x) / 2;
-        const cy2 = y;
-        path += `C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x} ${y} `;
-      }
-    });
-    return path;
-  };
 
   return (
     <div 
@@ -96,16 +131,45 @@ export default function TradingChart() {
           </filter>
         </defs>
 
-        {/* Main curved chart path */}
-        {dimensions.width > 0 && (
-          <path
-            d={generateChartPath()}
-            fill="none"
-            stroke="var(--neon-green)"
-            strokeWidth="3"
-            filter="url(#neonGlow)"
-          />
-        )}
+        {/* Main candlestick chart */}
+        {dimensions.width > 0 && candles.map((candle) => {
+          const xCenter = getPixelCoords(candle.xPos, 0).x;
+          const yOpen = getPixelCoords(0, candle.open).y;
+          const yClose = getPixelCoords(0, candle.close).y;
+          const yHigh = getPixelCoords(0, candle.high).y;
+          const yLow = getPixelCoords(0, candle.low).y;
+          
+          const topBox = Math.min(yOpen, yClose);
+          const bottomBox = Math.max(yOpen, yClose);
+          const boxHeight = Math.max(bottomBox - topBox, 2);
+          
+          const drawWidth = dimensions.width - (dimensions.width * 0.1);
+          const candleSpacing = drawWidth / candles.length;
+          const candleWidth = Math.max(candleSpacing * 0.6, 2);
+          
+          const color = candle.isGreen ? "var(--neon-green)" : "var(--neon-red)";
+          
+          return (
+            <g key={candle.id} style={{ opacity: 0.85 }}>
+              <line
+                x1={xCenter} y1={yHigh}
+                x2={xCenter} y2={yLow}
+                stroke={color}
+                strokeWidth="1.5"
+              />
+              <rect
+                x={xCenter - candleWidth / 2}
+                y={topBox}
+                width={candleWidth}
+                height={boxHeight}
+                fill={candle.isGreen ? "transparent" : color}
+                stroke={color}
+                strokeWidth="1.5"
+                filter="url(#neonGlow)"
+              />
+            </g>
+          );
+        })}
 
         {/* Crosshair */}
         {mousePos && dimensions.width > 0 && (
@@ -125,16 +189,29 @@ export default function TradingChart() {
 
         {/* Highlight points / interactive nodes */}
         {dimensions.width > 0 && chartData.map((point) => {
-          const { x, y } = getPixelCoords(point.xPosition, point.yPosition);
+          let closestCandle = candles[0];
+          if (candles.length > 0) {
+            let minDiff = Infinity;
+            for (const c of candles) {
+               const diff = Math.abs(c.xPos - point.xPosition);
+               if (diff < minDiff) {
+                  minDiff = diff;
+                  closestCandle = c;
+               }
+            }
+          }
+          const { x: snappedX } = getPixelCoords(closestCandle ? closestCandle.xPos : point.xPosition, 0);
+          const { y: snappedY } = getPixelCoords(0, closestCandle ? closestCandle.close : point.yPosition);
+          
           const isHovered = hoveredNode?.id === point.id;
           return (
             <circle
               key={point.id}
-              cx={x}
-              cy={y}
-              r={isHovered ? 8 : 5}
+              cx={snappedX}
+              cy={snappedY}
+              r={isHovered ? 8 : 6}
               fill="var(--bg-dark)"
-              stroke="var(--neon-green)"
+              stroke="var(--neon-blue)"
               strokeWidth={3}
               filter="url(#neonGlow)"
               style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
@@ -148,10 +225,28 @@ export default function TradingChart() {
       {/* HTML tooltip corresponding to hovered node */}
       <div 
         className={`${styles.nodeCard} ${hoveredNode ? styles.active : styles.hidden}`}
-        style={hoveredNode && dimensions.width > 0 ? {
-          left: getPixelCoords(hoveredNode.xPosition, hoveredNode.yPosition).x,
-          top: getPixelCoords(hoveredNode.xPosition, hoveredNode.yPosition).y - 20
-        } : undefined}
+        style={hoveredNode && dimensions.width > 0 ? (() => {
+          let closest = candles[0];
+          if (candles.length > 0) {
+             for (const c of candles) {
+                 if (!closest || Math.abs(c.xPos - hoveredNode.xPosition) < Math.abs(closest.xPos - hoveredNode.xPosition)) {
+                    closest = c;
+                 }
+             }
+          }
+          const coords = {
+            x: getPixelCoords(closest ? closest.xPos : hoveredNode.xPosition, 0).x,
+            y: getPixelCoords(0, closest ? closest.close : hoveredNode.yPosition).y
+          };
+          
+          const isNearTop = coords.y < dimensions.height * 0.3;
+          const isNearRight = coords.x > dimensions.width * 0.8;
+          return {
+            left: coords.x,
+            top: coords.y,
+            transform: `translate(${isNearRight ? '-90%' : '-50%'}, ${isNearTop ? '20px' : 'calc(-100% - 20px)'})`
+          };
+        })() : undefined}
       >
         {hoveredNode && (
           <>
@@ -162,8 +257,13 @@ export default function TradingChart() {
         )}
       </div>
 
-      <div className={styles.priceLabel}>
-        Now: Building the Future
+      <div className={styles.priceLabelWrap}>
+        <div className={styles.priceLabel}>
+          Now: Building the Future
+        </div>
+        <div className={styles.priceLabelTooltip}>
+          Ultimately, I plan to launch an investment fund, while also continuing to leverage my expertise to significantly accelerate the growth of the companies I work with.
+        </div>
       </div>
 
       <div className={styles.volumeContainer}>

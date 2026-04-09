@@ -21,7 +21,7 @@ export const chartData: Milestone[] = [
     visualType: "spike",
     status: "positive",
     xPosition: 10,
-    yPosition: 85, // Small spike early on
+    yPosition: 15, // Small spike early on
   },
   {
     id: "2",
@@ -31,7 +31,7 @@ export const chartData: Milestone[] = [
     visualType: "consolidation",
     status: "neutral",
     xPosition: 25,
-    yPosition: 75, // Consolidating somewhat higher than base
+    yPosition: 40,
   },
   {
     id: "3",
@@ -41,36 +41,56 @@ export const chartData: Milestone[] = [
     visualType: "accumulation",
     status: "neutral",
     xPosition: 45,
-    yPosition: 70, // Sideways accumulation, slight dip
+    yPosition: 20, // Sideways accumulation, slight dip
   },
   {
     id: "4",
     displayYear: "2024",
-    label: "Trading Bot Development",
-    description: "Co-developed a trading bot reaching €120,000 capital",
+    label: "Trading Bot Team",
+    description: "Member of a team managing a trading bot with over €700k in equity.",
     visualType: "breakout",
     status: "positive",
-    xPosition: 65,
-    yPosition: 40, // Strong breakout upwards (lower Y is higher on screen usually, or if we map Y=100 bottom, let's map Y=100 as top, Y=0 as bottom, but standard SVG has 0 at top. Let's provide standard cartesian with Y=100 as top, and convert in UI)
+    xPosition: 57,
+    yPosition: 60,
   },
   {
     id: "5",
+    displayYear: "2024",
+    label: "Personal Trading Bot",
+    description: "Developed my own trading bot (managing €120k) to significantly improve performance and risk management.",
+    visualType: "breakout",
+    status: "positive",
+    xPosition: 70,
+    yPosition: 45,
+  },
+  {
+    id: "6",
     displayYear: "2022–2025",
     label: "FTMO Funding",
     description: "Funded 4 times, totaling €80,000 in capital",
     visualType: "stacked",
     status: "positive",
-    xPosition: 80,
-    yPosition: 30, // Stacked gains extending breakout
+    xPosition: 82,
+    yPosition: 80,
   },
   {
-    id: "6",
+    id: "7",
     displayYear: "Late 2025",
     label: "Elite Performance Phase (Eugenia School)",
-    description: "Participated in databases & hackathons: 🥇 1st place (LVMH), 🥈 2nd place (Payfit)",
+    description: "Participated in BDD & hackathons: 🥇 1st place (LVMH), 🥈 2nd place (Payfit), 🥉 3rd place (Licter)",
     visualType: "rally",
     status: "positive",
-    xPosition: 95,
-    yPosition: 10, // Peak performance zone
+    xPosition: 90,
+    yPosition: 65,
+  },
+  {
+    id: "8",
+    displayYear: "Very Late 2025",
+    label: "Portfolio Diversification",
+    description: "Acquired over €200k in real estate capital to diversify revenue streams, alongside a portfolio of publicly traded stocks.",
+    visualType: "consolidation",
+    status: "positive",
+    xPosition: 100,
+    yPosition: 100,
   }
 ];
