@@ -262,7 +262,7 @@ export default function TradingChart() {
           Now: Building the Future
         </div>
         <div className={styles.priceLabelTooltip}>
-          Ultimately, I plan to launch an investment fund, while also continuing to leverage my expertise to significantly accelerate the growth of the companies I work with.
+          At 18, I set a personal goal to reach my first million within 5 years—leaving me exactly 3 years to achieve this target. Ultimately, I plan to launch an investment fund while continuing to leverage my expertise to significantly accelerate the growth of the companies I work with.
         </div>
       </div>
 

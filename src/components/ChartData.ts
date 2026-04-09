@@ -15,9 +15,9 @@ export interface Milestone {
 export const chartData: Milestone[] = [
   {
     id: "1",
-    displayYear: "2018",
+    displayYear: "2021",
     label: "Digital Marketing Automation",
-    description: "Created an automated bot generating €1,800 revenue",
+    description: "Created and ran an automated bot generating €1,800 revenue at just 15 years old.",
     visualType: "spike",
     status: "positive",
     xPosition: 10,
