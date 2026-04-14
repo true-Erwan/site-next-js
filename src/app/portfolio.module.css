@@ -1,0 +1,283 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 8px 8px 0 0;
+  z-index: 10;
+}
+
+.titleWrapper h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(90deg, #fff, var(--text-dim));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tagline {
+  font-size: 0.875rem;
+  color: var(--neon-green);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+.dashboardLayout {
+  display: flex;
+  flex: 1;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chartContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.svgContext {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.infoOverlay {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.priceLabelWrap {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+}
+
+.priceLabel {
+  position: relative;
+  background: var(--neon-green);
+  color: #000;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.875rem;
+  cursor: help;
+  animation: pulse 2s infinite;
+}
+
+.priceLabelTooltip {
+  visibility: hidden;
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  width: 320px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  font-size: 0.85rem;
+  font-weight: normal;
+  text-align: right;
+  line-height: 1.5;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.priceLabelWrap:hover .priceLabelTooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+}
+
+.volumeContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.nodeCard {
+  position: absolute;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  z-index: 9999;
+  pointer-events: none;
+  transform: translate(-50%, -120%);
+  transition: opacity 0.2s ease;
+}
+
+.nodeCard.active {
+  opacity: 1;
+}
+
+.nodeCard.hidden {
+  opacity: 0;
+}
+
+.nodeYear {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--neon-green);
+}
+
+.nodeLabel {
+  font-weight: 600;
+  margin: 8px 0 4px;
+  font-size: 1rem;
+}
+
+.nodeDesc {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* Contact Menu Styles */
+.contactWrapper {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+}
+
+.contactIcon {
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contactWrapper:hover .contactIcon {
+  background: var(--neon-blue);
+  color: var(--bg-dark);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}
+
+.contactMenu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 400px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  font-family: var(--font-sans);
+}
+
+.contactMenu::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+}
+
+.contactWrapper:hover .contactMenu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.contactSection {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.contactSection:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.contactName {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.contactDesc {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.contactLink {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  margin: 8px 0;
+  text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.contactLink span {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-right: 8px;
+}
+
+.contactLink:hover {
+  color: var(--neon-green);
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.4);
+}
