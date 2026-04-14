@@ -29,6 +29,7 @@ export default function Portfolio() {
 
             <div className={styles.contactSection}>
               <div className={styles.contactName}>DJAMEL ZOUAOUI</div>
+              <div className={styles.contactDesc}>
                 Business Law Attorney specializing in Real Estate. Proven track record of securing profits across all transactions and auctions, having successfully acquired hundreds of apartments for himself and his clients.
               </div>
               <a href="tel:+33660820506" className={styles.contactLink}>
