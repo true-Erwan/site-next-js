@@ -22,7 +22,7 @@ export default function Portfolio() {
               <a href="mailto:ezouaoui@eugeniaschool.com" className={styles.contactLink}>
                 <span>Email:</span>ezouaoui@eugeniaschool.com
               </a>
-              <a href="https://fr.linkedin.com/in/erwan-zouaoui-39843b2b7" target="_blank" rel="noreferrer" className={styles.contactLink}>
+              <a href="https://www.linkedin.com/in/erwan-zouaoui-39843b2b7/" target="_blank" rel="noreferrer" className={styles.contactLink}>
                 <span>LinkedIn:</span>Erwan Zouaoui
               </a>
             </div>
