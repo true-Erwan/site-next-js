@@ -42,7 +42,6 @@
   border-top: none;
   border-radius: 0 0 8px 8px;
   position: relative;
-  overflow: hidden;
 }
 
 .chartContainer {
@@ -280,4 +279,32 @@
 .contactLink:hover {
   color: var(--neon-green);
   text-shadow: 0 0 8px rgba(0, 255, 157, 0.4);
+}
+
+.readMoreBtn {
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.readMoreBtn:hover {
+  background: var(--neon-blue);
+  color: var(--bg-dark);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+}
+
+.detailedDesc {
+  margin-top: 12px;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 12px;
+  max-height: 250px;
+  overflow-y: auto;
 }

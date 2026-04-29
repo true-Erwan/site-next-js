@@ -7,9 +7,12 @@ import styles from '../app/portfolio.module.css';
 export default function TradingChart() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<Milestone | null>(null);
+  const [expandedNodeId, setExpandedNodeId] = useState<string | null>(null);
+  const hideTimeoutRef = useRef<any>(null);
   const [mousePos, setMousePos] = useState<{ x: number, y: number } | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [candles, setCandles] = useState<any[]>([]);
+  const [volumes, setVolumes] = useState<{height: number, isRed: boolean}[]>([]);
 
   useEffect(() => {
     const numCandles = 80;
@@ -64,6 +67,12 @@ export default function TradingChart() {
         prevClose = close;
     }
     setCandles(newCandles);
+
+    const newVolumes = Array.from({ length: 40 }).map(() => ({
+      height: Math.random() * 60 + 10,
+      isRed: Math.random() > 0.8
+    }));
+    setVolumes(newVolumes);
   }, []);
   
   useEffect(() => {
@@ -215,12 +224,44 @@ export default function TradingChart() {
               strokeWidth={3}
               filter="url(#neonGlow)"
               style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
-              onMouseEnter={() => setHoveredNode(point)}
-              onMouseLeave={() => setHoveredNode(null)}
+              onMouseEnter={() => {
+                if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+                setHoveredNode(point);
+              }}
+              onMouseLeave={() => {
+                hideTimeoutRef.current = setTimeout(() => {
+                  setHoveredNode(null);
+                  setExpandedNodeId(null);
+                }, 250);
+              }}
             />
           );
         })}
       </svg>
+
+      <div className={styles.priceLabelWrap}>
+        <div className={styles.priceLabel}>
+          Now: Building the Future
+        </div>
+        <div className={styles.priceLabelTooltip}>
+          At 18, I set a personal goal to reach my first million within 5 years—leaving me exactly 3 years to achieve this target. Ultimately, I plan to launch an investment fund while continuing to leverage my expertise to significantly accelerate the growth of the companies I work with.
+        </div>
+      </div>
+
+      <div className={styles.volumeContainer}>
+        {/* Fake volume bars */}
+        {volumes.map((vol, i) => (
+          <div 
+            key={i} 
+            style={{
+              background: vol.isRed ? 'var(--neon-red)' : 'var(--neon-green-dim)',
+              height: `${vol.height}%`,
+              width: 'calc(100% / 40 - 2px)',
+              margin: '0 1px'
+            }} 
+          />
+        ))}
+      </div>
 
       {/* HTML tooltip corresponding to hovered node */}
       <div 
@@ -240,48 +281,55 @@ export default function TradingChart() {
           };
           
           const isNearTop = coords.y < dimensions.height * 0.3;
+          const isNearBottom = coords.y > dimensions.height * 0.7;
+          const verticalTransform = isNearTop ? '20px' : (isNearBottom ? 'calc(-100% - 20px)' : '-50%');
           const isNearRight = coords.x > dimensions.width * 0.8;
           return {
             left: coords.x,
             top: coords.y,
-            transform: `translate(${isNearRight ? '-90%' : '-50%'}, ${isNearTop ? '20px' : 'calc(-100% - 20px)'})`
+            transform: `translate(${isNearRight ? '-90%' : '-50%'}, ${verticalTransform})`,
+            pointerEvents: 'auto' as React.CSSProperties['pointerEvents'],
+            zIndex: 99999
           };
-        })() : undefined}
+        })() : { pointerEvents: 'none' as React.CSSProperties['pointerEvents'], zIndex: 99999 }}
+        onMouseEnter={() => {
+          if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+        }}
+        onMouseLeave={() => {
+          hideTimeoutRef.current = setTimeout(() => {
+            setHoveredNode(null);
+            setExpandedNodeId(null);
+          }, 250);
+        }}
       >
         {hoveredNode && (
           <>
             <div className={styles.nodeYear}>{hoveredNode.displayYear}</div>
             <div className={styles.nodeLabel}>{hoveredNode.label}</div>
             <div className={styles.nodeDesc}>{hoveredNode.description}</div>
+            
+            {hoveredNode.detailedDescription && (
+              <>
+                {expandedNodeId !== hoveredNode.id ? (
+                  <button 
+                    className={styles.readMoreBtn} 
+                    onClick={() => setExpandedNodeId(hoveredNode.id)}
+                  >
+                    Read More
+                  </button>
+                ) : (
+                  <div className={styles.detailedDesc}>
+                    {hoveredNode.detailedDescription.split('\n\n').map((para, i) => (
+                      <p key={i} style={{ marginBottom: '8px', fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.5' }}>
+                        {para.split('**').map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </>
         )}
-      </div>
-
-      <div className={styles.priceLabelWrap}>
-        <div className={styles.priceLabel}>
-          Now: Building the Future
-        </div>
-        <div className={styles.priceLabelTooltip}>
-          At 18, I set a personal goal to reach my first million within 5 years—leaving me exactly 3 years to achieve this target. Ultimately, I plan to launch an investment fund while continuing to leverage my expertise to significantly accelerate the growth of the companies I work with.
-        </div>
-      </div>
-
-      <div className={styles.volumeContainer}>
-        {/* Fake volume bars */}
-        {Array.from({ length: 40 }).map((_, i) => {
-          const height = Math.random() * 60 + 10;
-          return (
-            <div 
-              key={i} 
-              style={{
-                background: Math.random() > 0.8 ? 'var(--neon-red)' : 'var(--neon-green-dim)',
-                height: `${height}%`,
-                width: 'calc(100% / 40 - 2px)',
-                margin: '0 1px'
-              }} 
-            />
-          );
-        })}
       </div>
     </div>
   );
