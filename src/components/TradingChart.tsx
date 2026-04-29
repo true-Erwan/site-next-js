@@ -214,27 +214,39 @@ export default function TradingChart() {
           
           const isHovered = hoveredNode?.id === point.id;
           return (
-            <circle
-              key={point.id}
-              cx={snappedX}
-              cy={snappedY}
-              r={isHovered ? 8 : 6}
-              fill="var(--bg-dark)"
-              stroke="var(--neon-blue)"
-              strokeWidth={3}
-              filter="url(#neonGlow)"
-              style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
-              onMouseEnter={() => {
-                if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
-                setHoveredNode(point);
-              }}
-              onMouseLeave={() => {
-                hideTimeoutRef.current = setTimeout(() => {
-                  setHoveredNode(null);
-                  setExpandedNodeId(null);
-                }, 250);
-              }}
-            />
+            <g key={point.id}>
+              {!isHovered && (
+                <circle
+                  className={styles.rippleNode}
+                  cx={snappedX}
+                  cy={snappedY}
+                  r={6}
+                  fill="transparent"
+                  stroke="var(--neon-blue)"
+                  style={{ pointerEvents: 'none', transformOrigin: `${snappedX}px ${snappedY}px` }}
+                />
+              )}
+              <circle
+                className={!isHovered ? styles.interactiveNode : ''}
+                cx={snappedX}
+                cy={snappedY}
+                r={isHovered ? 8 : 6}
+                fill="var(--bg-dark)"
+                stroke="var(--neon-blue)"
+                filter="url(#neonGlow)"
+                style={{ cursor: 'pointer', transition: 'all 0.2s ease', strokeWidth: isHovered ? 4 : undefined }}
+                onMouseEnter={() => {
+                  if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+                  setHoveredNode(point);
+                }}
+                onMouseLeave={() => {
+                  hideTimeoutRef.current = setTimeout(() => {
+                    setHoveredNode(null);
+                    setExpandedNodeId(null);
+                  }, 250);
+                }}
+              />
+            </g>
           );
         })}
       </svg>
